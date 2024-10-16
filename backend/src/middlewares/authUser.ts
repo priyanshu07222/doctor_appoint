@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express'
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 
 // user authentication middleware
 
@@ -15,11 +15,11 @@ const authUser = async (req: Request, res: Response, next: NextFunction): Promis
 
 
 
-        const token_decode = jwt.verify(token, process.env.JWT_SECRET!)
+        const token_decode = jwt.verify(token, process.env.JWT_SECRET!) as JwtPayload
 
         req.body.userId = token_decode.id
         next()
-        
+
     } catch (error) {
         console.log(error)
         res.json({ success: false, message: error })
