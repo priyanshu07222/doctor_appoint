@@ -28,7 +28,7 @@ export const Login = () => {
           toast.error(data.message)
         }
       } else {
-        const { data } = await axios.post(backendUrl + '/api/user/login', { password, email })
+        const { data } = await axios.post(backendUrl + '/api/user/login', { email, password })
         if (data.success) {
           localStorage.setItem('token', data.token)
           setToken(data.token)
@@ -65,7 +65,9 @@ export const Login = () => {
         </div>
         <div className='w-full'>
           <p>Password</p>
-          <input className='border border-zinc-300 rounded w-full p-2 mt-1' type="password" onChange={(e) => setPassword(e.target.value)} value={password} />
+          <input className='border border-zinc-300 rounded w-full p-2 mt-1' type="password" onChange={(e) => {setPassword(e.target.value)
+            console.log(e.target.value)
+          }} value={password} />
         </div>
         <button type='submit' className='bg-primary text-white w-full py-2 rounded-md text-base'>{state === 'Sign Up' ? "Create Account" : "Login"}</button>
         {

@@ -73,7 +73,7 @@ const registerUser = async (req: Request, res: Response): Promise<any> => {
 // API for user login
 const loginUser = async (req: Request, res: Response): Promise<any> => {
     try {
-        const { email, passsword } = req.body
+        const { email, password } = req.body
         const user = await userModel.findOne({ email })
 
         if (!user) {
@@ -83,7 +83,7 @@ const loginUser = async (req: Request, res: Response): Promise<any> => {
             })
         }
 
-        const isMatch = await bcrypt.compare(passsword, user.password)
+        const isMatch = await bcrypt.compare(password, user.password)
 
         if (isMatch) {
             const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET!)
