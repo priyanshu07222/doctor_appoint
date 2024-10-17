@@ -56,7 +56,7 @@ export const AddDoctor = () => {
             } else{
                 toast.error(data.message)
             }
-        } catch (error) {
+        } catch (error:any) {
             toast.error(error.message)
         }
     }
@@ -144,7 +144,7 @@ export const AddDoctor = () => {
                     <textarea onChange={(e) => setAbout(e.target.value)} value={about} className='w-full px-4 pt-2 border rounded' placeholder='write about doctor' rows={5} required></textarea>
                 </div>
 
-                <button type='submit' className='bg-primary mt-4 rounded-full px-10 py-3 text-white'></button>
+                <button type='submit' className='bg-primary mt-4 rounded-full px-10 py-3 text-white'>Submit</button>
             </div>
         </form>
     )
