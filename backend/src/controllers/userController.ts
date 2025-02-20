@@ -259,7 +259,7 @@ const listAppointment = async (req: Request, res: Response): Promise<any> => {
 const cancelAppointment = async (req: Request, res: Response): Promise<any> => {
     try {
         const { userId, appointmentId } = req.body
-        console.log("ne wid", appointmentId)
+        // console.log("ne wid", appointmentId)
 
         const appointmentData = await appointmentModel.findById(appointmentId)
 

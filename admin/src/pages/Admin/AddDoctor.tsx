@@ -1,4 +1,4 @@
-import React, { FormEvent, useContext, useState } from 'react'
+import { FormEvent, useContext, useState } from 'react'
 import { assets } from '../../assets/assets'
 import { AdminContext } from '../../context/AdminContext'
 import { toast } from 'react-toastify'
@@ -6,7 +6,7 @@ import axios from 'axios'
 
 export const AddDoctor = () => {
 
-    const [docImg, setDocImg] = useState(false)
+    const [docImg, setDocImg] = useState<File | null>(null);
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
@@ -18,33 +18,33 @@ export const AddDoctor = () => {
     const [address1, setAddress1] = useState('')
     const [address2, setAddress2] = useState('')
 
-    const {backendUrl, aToken} = useContext(AdminContext)
+    const { backendUrl, aToken } = useContext(AdminContext)
 
-    const onSubmitHandler = async(e:FormEvent) =>{
+    const onSubmitHandler = async (e: FormEvent) => {
         e.preventDefault()
         try {
-            if(!docImg){
+            if (!docImg) {
                 return toast.error("Image Not Seleccted")
             }
 
             const formData = new FormData()
-            formData.append('image', docImg)
+            formData.append('image', String(docImg))
             formData.append('name', name)
             formData.append('email', email)
             formData.append('password', password)
             formData.append('experience', experience)
-            formData.append('fees', Number(fees))
+            formData.append('fees', fees)
             formData.append('about', about)
             formData.append('speciality', speciality)
             formData.append('degree', degree)
-            formData.append('address1', JSON.stringify({line1: address1, line2: address2}))
+            formData.append('address1', JSON.stringify({ line1: address1, line2: address2 }))
 
 
-            const {data} = await axios.post(backendUrl + '/api/admin/add-doctor', formData, {headers: {aToken}})
+            const { data } = await axios.post(backendUrl + '/api/admin/add-doctor', formData, { headers: { aToken } })
 
-            if(data.success) {
+            if (data.success) {
                 toast.success(data.message)
-                setDocImg(false)
+                setDocImg(null)
                 setName('')
                 setPassword('')
                 setEmail('')
@@ -53,10 +53,10 @@ export const AddDoctor = () => {
                 setDegree('')
                 setAbout('')
                 setFees('')
-            } else{
+            } else {
                 toast.error(data.message)
             }
-        } catch (error:any) {
+        } catch (error: any) {
             toast.error(error.message)
         }
     }
@@ -69,7 +69,17 @@ export const AddDoctor = () => {
                     <label htmlFor="doc-img">
                         <img className='w-16 bg-gray-100 rounded-full cursor-pointer' src={docImg ? URL.createObjectURL(docImg) : assets.upload_area} alt="" />
                     </label>
-                    <input onChange={(e) => setDocImg(e.target.files[0])} type="file" id="doc-img" hidden />
+                    <input
+                        onChange={(e) => {
+                            if (!e.target.files || e.target.files.length === 0) {
+                                return; // Exit if no file is selected
+                            }
+                            setDocImg(e.target.files[0]); // Assign the file safely
+                        }}
+                        type="file"
+                        id="doc-img"
+                        hidden
+                    />
                     <p>Upload doctor <br /> picture</p>
                 </div>
 

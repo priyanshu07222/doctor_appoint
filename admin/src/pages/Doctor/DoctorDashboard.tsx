@@ -1,10 +1,10 @@
-import React, { useContext, useEffect } from 'react'
+import { useContext, useEffect } from 'react'
 import { DoctorContext } from '../../context/DoctorContext'
 import { assets } from '../../assets/assets'
 import { AppContext } from '../../context/AppContext'
 
 export const DoctorDashboard = () => {
-    const { dashData, setDashData, getDashData, dToken, completeAppointment, cancelAppointment } = useContext(DoctorContext)
+    const { dashData,  getDashData, dToken, completeAppointment, cancelAppointment } = useContext(DoctorContext)
     const { currency, slotDateFormat } = useContext(AppContext)
 
     useEffect(() => {
@@ -50,12 +50,12 @@ export const DoctorDashboard = () => {
 
                 <div className='pt-4 border border-t-0'>
                     {
-                        dashData.latestAppointments.map((item, index) => (
+                        dashData.latestAppointments.map((item:any, index:any) => (
                             <div className='flex items-center px-6 py-3 gap-3 hover:bg-gray-100' key={index}>
                                 <img className='rounded-full w-10 h-10' src={item.userData.image} alt="" />
                                 <div className='flex-1 text-sm'>
                                     <p className='text-gray-800 font-medium'>{item.userData.name}</p>
-                                    {/* <p className='text-gray-600'>{slotDateFormat(item.slotDate)}</p> */}
+                                    <p className='text-gray-600'>{slotDateFormat(item.slotDate)}</p>
                                 </div>
                                 {
                                     item.cancelled

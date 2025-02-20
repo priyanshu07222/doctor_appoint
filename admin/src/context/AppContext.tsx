@@ -1,11 +1,14 @@
 import { createContext } from "react";
 
 export const AppContext = createContext({
+    calculateAge: (dob: Date):any => { },
+    slotDateFormat: (slotDate: string):any => { },
+    currency: '$'
 })
 
 const AppContextProvider = (props: { children: React.ReactNode }) => {
 
-    const calculateAge = (dob: Date) => {
+    const calculateAge = (dob: Date):number => {
         const today = new Date()
         const birthDate = new Date(dob)
 

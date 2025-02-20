@@ -18,7 +18,7 @@ const addDoctor = async (req: Request, res: Response): Promise<void> => {
         const { name, email, password, speciality, degree, experience, about, fees, address } = req.body;
         const imageFile = req.file
 
-        console.log(name, email, password, speciality, degree, experience, about, fees, JSON.parse(address))
+        // console.log(name, email, password, speciality, degree, experience, about, fees, JSON.parse(address))
 
         if (!name || !email || !password || !speciality || !degree || !experience || !about || !fees || !address || !imageFile) {
             res.status(400).json({
@@ -144,7 +144,7 @@ const appointmentsAdmin = async (req: Request, res: Response) => {
 const appointmentCancel = async (req: Request, res: Response): Promise<any> => {
     try {
         const { appointmentId } = req.body
-        console.log("ne wid", appointmentId)
+        // console.log("ne wid", appointmentId)
 
         const appointmentData = await appointmentModel.findById(appointmentId)
 

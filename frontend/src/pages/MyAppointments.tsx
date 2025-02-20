@@ -1,6 +1,6 @@
-import React, { useContext, useEffect, useState } from 'react'
+import  { useContext, useEffect, useState } from 'react'
 import { AppContext } from '../context/AppContext'
-import { assets } from '../assets/assets'
+// import { assets } from '../assets/assets'
 import { toast } from 'react-toastify'
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom'
@@ -11,9 +11,9 @@ export const MyAppointments = () => {
   const [appointments, setAppointments] = useState([])
   const navigate = useNavigate()
   const months = ["", "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-  
 
-  const slotDateFormat = (slotDate:string) => {
+
+  const slotDateFormat = (slotDate: string) => {
     const dateArray = slotDate.split('_')
     return dateArray[0] + " " + months[Number(dateArray[1])] + " " + dateArray[2]
   }
@@ -26,7 +26,6 @@ export const MyAppointments = () => {
 
   const getUserAppointments = async () => {
     try {
-      console.log("muss token", token)
       const { data } = await axios.get(backendUrl + '/api/user/appointments', { headers: { token } })
       if (data.success) {
         setAppointments(data.appointments.reverse())
@@ -39,9 +38,8 @@ export const MyAppointments = () => {
     }
   }
 
-  const cancelAppointment = async (appointmentId:string) => {
+  const cancelAppointment = async (appointmentId: string) => {
     try {
-      console.log(appointmentId)
       const { data } = await axios.post(backendUrl + '/api/user/cancel-appointment', { appointmentId }, { headers: { token } })
       if (data.success) {
         toast.success(data.message)
@@ -57,28 +55,28 @@ export const MyAppointments = () => {
   }
 
 
-  const initPay = (order:any) => {
+  const initPay = (order: any) => {
     const options = {
       key: import.meta.env.VITE_RAZORPAY_KEY_ID,
       amount: order.amount,
       currency: order.currency,
-      name:"Appointment Payment",
-      description:"Appointment Payment",
+      name: "Appointment Payment",
+      description: "Appointment Payment",
       order_id: order.id,
       receipt: order.receipt,
-      handler: async(response: Response) => {
+      handler: async (response: Response) => {
         console.log(response);
         try {
-          const {data} = await axios.post(backendUrl + '/api/user/verifyRazorpay', response, {headers:{token}})
-          if(data.success){
+          const { data } = await axios.post(backendUrl + '/api/user/verifyRazorpay', response, { headers: { token } })
+          if (data.success) {
             getUserAppointments()
             navigate('/my-appointment')
           }
-        } catch (error:any) {
+        } catch (error: any) {
           console.log(error)
           toast.error(error.message)
         }
-        
+
       }
     }
 
@@ -88,15 +86,15 @@ export const MyAppointments = () => {
 
   const appointmentRazorpay = async (appointmentId: string) => {
     try {
-      const {data} = await axios.post(backendUrl + '/api/user/payment-razorpay', {appointmentId}, {headers:{token}})
+      const { data } = await axios.post(backendUrl + '/api/user/payment-razorpay', { appointmentId }, { headers: { token } })
 
-      if(data.success){
+      if (data.success) {
         initPay(data.order)
         toast.success(data.success)
-      }else{
+      } else {
         toast.error(data.message)
       }
-    } catch (error:any) {
+    } catch (error: any) {
       toast.error(error.message)
     }
   }
@@ -104,16 +102,15 @@ export const MyAppointments = () => {
   useEffect(() => {
     if (token) {
       getUserAppointments()
-      console.log("appointments", appointments)
     }
   }, [token])
-  return ( appointments &&
+  return (appointments &&
     <div>
       <p className='pb-3 mt-12 font-medium text-zinc-700 border-b'>My Appointment</p>
       <div>
         {
-          appointments.map((item:{
-            _id:string,
+          appointments.map((item: {
+            _id: string,
             docData: {
               _id: string;
               name: string;
@@ -130,9 +127,10 @@ export const MyAppointments = () => {
               slots_booked: [any]
             }
             cancelled: boolean,
-            payment: boolean, 
-            slotTime:string,
-            slotDate:string
+            payment: boolean,
+            slotTime: string,
+            slotDate: string,
+            isCompleted: boolean
           }, index) => (
             <div className='grid grid-cols-[1fr_2fr] gap-4 sm:flex sm:gap-6 py-2 border-b' key={index}>
               <div>
@@ -149,10 +147,11 @@ export const MyAppointments = () => {
               </div>
               <div></div>
               <div>
-                {!item.cancelled && item.payment && <button className='sm:min-w-48 py-2 border rounded text-slate-500 bg-indigo-50'>Paid</button>}
-                {!item.cancelled && !item.payment && <button onClick={() => {appointmentRazorpay(item._id)}} className=' text-xs text-stone-500 text-center sm:min-w-48 py-2 border hover:bg-primary hover:text-white transition-all duration-300'>Pay Online</button>}
-                {!item.cancelled && <button onClick={() => cancelAppointment(item._id)} className=' text-xs text-stone-500 text-center sm:min-w-48 py-2 border hover:bg-red-600 hover:text-white transition-all duration-300'>Cancel Appointment</button>}
-                {item.cancelled && <button className='sm:min-w-48 py-2 border border-red-500 rounded text-red-500'>Appointment cancelled</button>}
+                {!item.cancelled && item.payment && !item.isCompleted && <button className='sm:min-w-48 py-2 border rounded text-slate-500 bg-indigo-50'>Paid</button>}
+                {!item.cancelled && !item.payment && !item.isCompleted && <button onClick={() => { appointmentRazorpay(item._id) }} className=' text-xs text-stone-500 text-center sm:min-w-48 py-2 border hover:bg-primary hover:text-white transition-all duration-300'>Pay Online</button>}
+                {!item.cancelled && !item.isCompleted && <button onClick={() => cancelAppointment(item._id)} className=' text-xs text-stone-500 text-center sm:min-w-48 py-2 border hover:bg-red-600 hover:text-white transition-all duration-300'>Cancel Appointment</button>}
+                {item.cancelled && !item.isCompleted && <button className='sm:min-w-48 py-2 border border-red-500 rounded text-red-500'>Appointment cancelled</button>}
+                {item.isCompleted && <button className='sm:min-w-48 py-2 border border-green-500 rounded text-green-500'>Completed</button>}
               </div>
             </div>
 

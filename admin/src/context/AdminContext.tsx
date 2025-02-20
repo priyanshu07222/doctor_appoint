@@ -11,7 +11,10 @@ interface typeOfAdminContext {
     changeAvailability: (docId: string) => Promise<void> // async function returning a promise
     appointments: any[],
     setAppointments: any,
-    getAllAppointments: () => Promise<void>
+    getAllAppointments: () => Promise<void>,
+    cancelAppointment: (appointmentId: string) => Promise<void>,
+    dashData: any,
+    getDashData: () => Promise<void>
 }
 
 // Initialize context with default values
@@ -24,11 +27,14 @@ export const AdminContext = createContext<typeOfAdminContext>({
     changeAvailability: async () => { },
     getAllAppointments: async () => { },
     appointments: [],
-    setAppointments: []
+    setAppointments: [],
+    cancelAppointment: async () => { },
+    dashData: {},
+    getDashData: async () => { }
 });
 
 const AdminContextProvider = (props: { children: React.ReactNode }) => {
-    const [aToken, setAToken] = useState(localStorage.getItem('aToken') ? localStorage.getItem('aToken') : '');
+    const [aToken, setAToken] = useState( localStorage.getItem('aToken') || '');
     const [doctors, setDoctors] = useState([]);
     const [appointments, setAppointments] = useState([])
     const [dashData, setDashData] = useState(false)
@@ -39,7 +45,7 @@ const AdminContextProvider = (props: { children: React.ReactNode }) => {
             const { data } = await axios.post(backendUrl + '/api/admin/all-doctors', {}, { headers: { aToken } })
             if (data.success) {
                 setDoctors(data.doctors);
-                console.log(data.doctors);
+                // console.log(data.doctors);
             } else {
                 toast.error(data.message);
             }

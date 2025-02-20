@@ -2,14 +2,65 @@ import axios from "axios";
 import { createContext, useState } from "react";
 import { toast } from "react-toastify";
 
-export const DoctorContext = createContext({})
+interface Appointment {
+    _id: string;
+    userId: string;
+    docId: string;
+    slotDate: string;
+    slotTime: string;
+    userData: Record<string, any>; // Assuming it's a dynamic object
+    docData: Record<string, any>;  // Assuming it's a dynamic object
+    amount: number;
+    date: number;
+    cancelled?: boolean; // Optional because of the default value
+    payment?: boolean;   // Optional because of the default value
+    isCompleted?: boolean; // Optional because of the default value
+}
+
+interface DoctorContextType {
+
+    dToken: string;
+    setDToken: (value: string) => void;
+    backendUrl: string;
+    appointments: Appointment[];
+    setAppointments: (value: Appointment[]) => void;
+    getAppointments: () => void;
+    cancelAppointment: (appointmentId: string) => void;
+    completeAppointment: (appointmentId: string) => void;
+    dashData: any;
+    setDashData: (value: boolean | Record<string, any>) => void;
+    getDashData: () => void;
+    profileData: any;
+    setProfileData: (value: boolean | Record<string, any>) => void;
+    getProfileData: () => void;
+}
+
+export const DoctorContext = createContext<DoctorContextType>({
+    dToken: "",
+    setDToken: () => { },
+    backendUrl: "",
+    appointments: [],
+    setAppointments: () => { },
+    getAppointments: () => { },
+    cancelAppointment: () => { },
+    completeAppointment: () => { },
+    dashData: false,
+    setDashData: () => { },
+    getDashData: () => { },
+    profileData: false,
+    setProfileData: () => { },
+    getProfileData: () => { },
+});
+
+
 
 const DoctorContextProvider = (props: { children: React.ReactNode }) => {
     const backendUrl = import.meta.env.VITE_BACKEND_URL
 
-    const [dToken, setDToken] = useState(localStorage.getItem('dToken') ? localStorage.getItem('dToken') : '')
-    const [appointments, setAppointments] = useState([])
+    const [dToken, setDToken] = useState<string>(localStorage.getItem('dToken') || '')
+    const [appointments, setAppointments] = useState<Appointment[]>([])
     const [dashData, setDashData] = useState(false)
+    const [profileData, setProfileData] = useState(false)
 
     const getAppointments = async () => {
         try {
@@ -21,7 +72,7 @@ const DoctorContextProvider = (props: { children: React.ReactNode }) => {
             }
 
         } catch (error: any) {
-            console.log(error)
+            // console.log(error)
             toast.error(error.message)
         }
     }
@@ -38,7 +89,7 @@ const DoctorContextProvider = (props: { children: React.ReactNode }) => {
                 toast.error(data.message)
             }
         } catch (error: any) {
-            console.log(error)
+            // console.log(error)
             toast.error(error.message)
         }
     }
@@ -74,7 +125,22 @@ const DoctorContextProvider = (props: { children: React.ReactNode }) => {
         }
     }
 
-    const value = {
+    const getProfileData = async () => {
+        try {
+            const { data } = await axios.get(backendUrl + '/api/doctor/profile', { headers: { dToken } })
+
+            if (data.success) {
+                setProfileData(data.profileData)
+            } else {
+                toast.error(data.message)
+            }
+        } catch (error: any) {
+            console.log(error)
+            toast.error(error.message)
+        }
+    }
+
+    const value: any = {
         dToken,
         setDToken,
         backendUrl,
@@ -85,7 +151,11 @@ const DoctorContextProvider = (props: { children: React.ReactNode }) => {
         completeAppointment,
         dashData,
         setDashData,
-        getDashData
+        getDashData,
+        profileData,
+        setProfileData,
+        getProfileData
+
     }
 
     return (

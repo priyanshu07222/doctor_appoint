@@ -1,10 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react'
-import { assets } from '../assets/assets'
+import { useContext,  useState } from 'react'
+// import { assets } from '../assets/assets'
 import { AdminContext } from '../context/AdminContext'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import { DoctorContext } from '../context/DoctorContext'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 
 export const Login = () => {
   const [state, setState] = useState('Admin')
@@ -12,7 +12,7 @@ export const Login = () => {
   const [password, setPassword] = useState('')
   const context = useContext(AdminContext)
   const {setDToken} = useContext(DoctorContext)
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
 
   if(!context){
     throw new Error('context not found')
@@ -21,7 +21,7 @@ export const Login = () => {
   const {setAToken, backendUrl} = context
 
 
-  const onSubmitHandler = async (e) => {
+  const onSubmitHandler = async (e:any) => {
     e.preventDefault()
     try {
       if(state === 'Admin'){
